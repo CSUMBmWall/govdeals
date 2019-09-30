@@ -2,57 +2,52 @@ import scrapy
 from urllib.parse import urljoin
 
 class GovDealsSpider(scrapy.Spider):
-    open('govdeals.json', 'rb').close()
+    open('govdeals.json', 'w').close()
     name = "govdeals"
     start_urls = ['https://www.govdeals.com/index.cfm?fa=Main.ZipSearch&zipcode=93905&miles=150&milesKilo=miles&category=00&kWordSelect=2&locationType=miles&kWord=&country=&btn_submit=Submit']
     domain = "https://www.govdeals.com/"
 
     def parse(self, response):
         domain = "https://www.govdeals.com/"
-        for location in response.xpath('//table[@class="searchResults"]/tr/td[@valign="top"]/a'):
+        for location in response.xpath('//table[@class="searchResults"]/tr'):
+            # yield {
+            #     'url': location.css("a::attr(href)").get(),
+            #     'location': location.css('a::text').get()                
+            # }
             yield {
-                'url': location.xpath('//@href').get()
-        }
-
-    #     for location in response.xpath('//table[@class="searchResults"]/tr'):
-    #         # yield {
-    #         #     'url': location.css("a::attr(href)").get(),
-    #         #     'location': location.css('a::text').get()                
-    #         # }
-    #         yield {
-    #             # 'value': location.css("a::attr(href)").get(),
-    #             'url': urljoin(domain, location.css("a::attr(href)").get()),
-    #             'location': str(location.css('a::text').get())                
-    #         }
+                # 'value': location.css("a::attr(href)").get(),
+                'url': urljoin(domain, location.css("a::attr(href)").get()),
+                'location': str(location.css('a::text').get())                
+            }
 
 
-    #         # for deal in deals:
-    #         url = location.css("a::attr(href)").get()
-    #         if url is not None:
-    #             next_page = urljoin(domain, url)
-    #             yield scrapy.Request(next_page, callback=self.parseDetails)
+            # for deal in deals:
+            url = location.css("a::attr(href)").get()
+            if url is not None:
+                next_page = urljoin(domain, url)
+                yield scrapy.Request(next_page, callback=self.parseDetails)
 
-    # def parseDetails(self, response):
-    #     domain = "https://www.govdeals.com/"
-    #     for detail_location in response.xpath('//table[@class="searchResults"]/tr'):
-    #         # yield {
-    #         #     'img': location.css("img::attr(src)"),
-    #         #     'desc': location.css("img::text"),
-    #         #     # 'url': location.xpath("//div/a/@href")
-    #         # }
-    #         yield {
-    #             # 'value': location.css("a::attr(href)").get(),
-    #             'url': urljoin(domain, detail_location.css("a::attr(href)").get()),
-    #             'title': detail_location.css('a::attr(title)').get(),
-    #             'img': detail_location.xpath('//a/img/@src')               
-    #         }
+    def parseDetails(self, response):
+        domain = "https://www.govdeals.com/"
+        for detail_location in response.xpath('//table[@class="searchResults"]/tr'):
+            # yield {
+            #     'img': location.css("img::attr(src)"),
+            #     'desc': location.css("img::text"),
+            #     # 'url': location.xpath("//div/a/@href")
+            # }
+            yield {
+                # 'value': location.css("a::attr(href)").get(),
+                'url': urljoin(domain, detail_location.css("a::attr(href)").get()),
+                'title': detail_location.css('a::attr(title)').get(),
+                'img': detail_location.xpath('//a/img/@src')               
+            }
 
 
-    #         # for deal in deals:
-    #         url = detail_location.css("a::attr(href)").get()
-    #         if url is not None:
-    #             next_page = urljoin(domain, url)
-    #             yield scrapy.Request(next_page, callback=self.parse)
+            # for deal in deals:
+            url = detail_location.css("a::attr(href)").get()
+            if url is not None:
+                next_page = urljoin(domain, url)
+                yield scrapy.Request(next_page, callback=self.parse)
 
 
         # loc_urls = []

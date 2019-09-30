@@ -21,6 +21,10 @@ NEWSPIDER_MODULE = 'govdeals.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
+#Export as CSV Feed
+FEED_FORMAT = "csv"
+FEED_URI = "govdeals.csv"
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
